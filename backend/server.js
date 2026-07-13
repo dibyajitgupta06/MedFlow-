@@ -45,7 +45,9 @@ app.use(helmet({
 
 // CORS Configuration
 const corsOptions = {
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    callback(null, true);
+  },
   credentials: true,
   optionsSuccessStatus: 200,
 };
