@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext.jsx';
+import { LanguageProvider } from './context/LanguageContext.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import DashboardLayout from './layouts/DashboardLayout.jsx';
 
@@ -29,8 +30,9 @@ import ManageAppointments from './pages/Admin/ManageAppointments.jsx';
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Toaster
+      <LanguageProvider>
+        <AuthProvider>
+          <Toaster
           position="top-right"
           toastOptions={{
             duration: 3500,
@@ -172,7 +174,8 @@ function App() {
           {/* Default Redirection */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
-      </AuthProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </BrowserRouter>
   );
 }

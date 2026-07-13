@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAppointments, getPrescriptions, checkSymptoms, updateAppointmentStatus, getPrescriptionPdfUrl } from '../../services/api.js';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import {
   Calendar,
   FileText,
@@ -22,6 +23,7 @@ import toast from 'react-hot-toast';
 const PatientDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const [appointments, setAppointments] = useState([]);
   const [prescriptions, setPrescriptions] = useState([]);
   const [activeTab, setActiveTab] = useState('symptoms');
@@ -51,20 +53,23 @@ const PatientDashboard = () => {
   }, []);
 
   const handleCancelAppointment = async (apptId) => {
-    if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
+    const confirmMsg = language === 'bn' 
+      ? 'আপনি কি নিশ্চিত যে আপনি এই অ্যাপয়েন্টমেন্টটি বাতিল করতে চান?' 
+      : 'Are you sure you want to cancel this appointment?';
+    if (!window.confirm(confirmMsg)) return;
     try {
       await updateAppointmentStatus(apptId, { status: 'cancelled' });
-      toast.success('Appointment cancelled successfully.');
+      toast.success(language === 'bn' ? 'অ্যাপয়েন্টমেন্ট সফলভাবে বাতিল করা হয়েছে।' : 'Appointment cancelled successfully.');
       fetchData();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to cancel appointment.');
+      toast.error(err.response?.data?.message || (language === 'bn' ? 'অ্যাপয়েন্টমেন্ট বাতিল করা যায়নি।' : 'Failed to cancel appointment.'));
     }
   };
 
   const handleSymptomCheck = async (e) => {
     e.preventDefault();
     if (symptomsText.trim().length < 5) {
-      toast.error('Please describe your symptoms in more detail.');
+      toast.error(language === 'bn' ? 'দয়া করে আপনার লক্ষণগুলি আরও বিস্তারিতভাবে বর্ণনা করুন।' : 'Please describe your symptoms in more detail.');
       return;
     }
 
@@ -73,10 +78,10 @@ const PatientDashboard = () => {
     try {
       const { data } = await checkSymptoms(symptomsText);
       setSymptomResult(data);
-      toast.success('Symptom analysis complete!');
+      toast.success(language === 'bn' ? 'লক্ষণ বিশ্লেষণ সম্পন্ন হয়েছে!' : 'Symptom analysis complete!');
     } catch (err) {
       console.error(err);
-      toast.error('AI diagnosis is currently offline. Please seek clinical support.');
+      toast.error(language === 'bn' ? 'এআই ডায়াগনোসিস অফলাইন রয়েছে। ক্লিনিকে যোগাযোগ করুন।' : 'AI diagnosis is currently offline. Please seek clinical support.');
     } finally {
       setSymptomLoading(false);
     }
@@ -98,11 +103,13 @@ const PatientDashboard = () => {
           <Activity className="h-full w-full" />
         </div>
         <span className="rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
-          Patient Portal
+          {t('patientPortal')}
         </span>
-        <h1 className="text-3xl font-extrabold tracking-tight mt-4">Hello, {user?.profile?.name || 'Guest'}</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight mt-4">{t('welcome')}, {user?.profile?.name || 'Guest'}</h1>
         <p className="mt-2 text-teal-50 text-xs font-medium max-w-xl leading-relaxed">
-          Welcome to your health dashboard. Run AI symptom checks, book appointments, or download medical prescriptions.
+          {language === 'bn' 
+            ? 'আপনার হেলথ ড্যাশবোর্ডে স্বাগতম। এখানে এআই লক্ষণ পরীক্ষা, ডাক্তার অ্যাপয়েন্টমেন্ট বুকিং বা ডিজিটাল প্রেসক্রিপশন ডাউনলোড করতে পারেন।' 
+            : 'Welcome to your health dashboard. Run AI symptom checks, book appointments, or download medical prescriptions.'}
         </p>
       </div>
 
@@ -110,9 +117,9 @@ const PatientDashboard = () => {
       <div className="border-b border-slate-200/60 dark:border-slate-800/60">
         <div className="flex gap-6">
           {[
-            { id: 'symptoms', label: 'AI Symptom Checker', icon: Brain },
-            { id: 'appointments', label: 'My Appointments', icon: Calendar },
-            { id: 'prescriptions', label: 'My Prescriptions', icon: FileText },
+            { id: 'symptoms', label: t('aiSymptomChecker'), icon: Brain },
+            { id: 'appointments', label: t('upcomingConsultations'), icon: Calendar },
+            { id: 'prescriptions', label: t('healthHistory'), icon: FileText },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -142,9 +149,9 @@ const PatientDashboard = () => {
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-teal-500 animate-pulse" />
               <div>
-                <h3 className="text-base font-bold text-slate-800 dark:text-white">AI Clinical Symptom Checker</h3>
+                <h3 className="text-base font-bold text-slate-800 dark:text-white">{t('aiSymptomChecker')}</h3>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                  Powered by Google Gemini models. Describe your feelings to retrieve immediate diagnostic estimates.
+                  {t('aiDesc')}
                 </p>
               </div>
             </div>
@@ -154,7 +161,7 @@ const PatientDashboard = () => {
                 <textarea
                   rows="3"
                   className="w-full rounded-2xl border border-slate-200 bg-slate-50/30 p-4 text-sm focus:border-teal-500 focus:outline-none dark:border-slate-800 dark:bg-slate-900/30"
-                  placeholder="Example: I feel a throbbing pain on the left side of my head, accompanied by nausea and light sensitivity."
+                  placeholder={t('symptomPlaceholder')}
                   value={symptomsText}
                   onChange={(e) => setSymptomsText(e.target.value)}
                 ></textarea>
@@ -169,12 +176,12 @@ const PatientDashboard = () => {
                   {symptomLoading ? (
                     <>
                       <Loader className="h-4 w-4 animate-spin" />
-                      Analyzing...
+                      {t('analyzing')}
                     </>
                   ) : (
                     <>
                       <Send className="h-4 w-4" />
-                      Submit symptoms
+                      {t('analyzeBtn')}
                     </>
                   )}
                 </button>
@@ -189,7 +196,7 @@ const PatientDashboard = () => {
                     <Heart className="h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-slate-850 dark:text-white uppercase tracking-wider">Analysis Diagnostic Estimate</h4>
+                    <h4 className="text-xs font-bold text-slate-850 dark:text-white uppercase tracking-wider">{t('analysisResults')}</h4>
                     <p className="text-[9px] text-slate-400 uppercase tracking-widest mt-0.5">Google Gemini AI Output</p>
                   </div>
                 </div>
@@ -197,7 +204,7 @@ const PatientDashboard = () => {
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   {/* Left Column: Match estimates */}
                   <div className="space-y-4">
-                    <h5 className="text-[10px] font-bold text-slate-450 uppercase tracking-widest">Estimated Diagnoses</h5>
+                    <h5 className="text-[10px] font-bold text-slate-450 uppercase tracking-widest">{t('possibleCondition')}</h5>
                     {symptomResult.conditions?.map((cond, i) => (
                       <div key={i} className="rounded-xl bg-white p-4 border border-slate-100 hover-glow dark:bg-slate-900/60 dark:border-slate-800/80">
                         <div className="flex items-center justify-between">
@@ -207,20 +214,22 @@ const PatientDashboard = () => {
                             cond.probability === 'Medium' ? 'bg-amber-500/10 text-amber-550' :
                             'bg-green-500/10 text-green-550'
                           }`}>
-                            {cond.probability} Probability
+                            {cond.probability === 'High' ? (language === 'bn' ? 'উচ্চ' : 'High') :
+                             cond.probability === 'Medium' ? (language === 'bn' ? 'মাঝারি' : 'Medium') :
+                             (language === 'bn' ? 'কম' : 'Low')} {language === 'bn' ? 'সম্ভাবনা' : 'Probability'}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-550 dark:text-slate-400 mt-2 leading-relaxed">{cond.description}</p>
+                        <p className="text-xs text-slate-555 dark:text-slate-400 mt-2 leading-relaxed">{cond.description}</p>
                       </div>
                     ))}
                   </div>
 
                   {/* Right Column: Actions */}
                   <div className="space-y-4">
-                    <h5 className="text-[10px] font-bold text-slate-450 uppercase tracking-widest">Recommended Actions</h5>
+                    <h5 className="text-[10px] font-bold text-slate-450 uppercase tracking-widest">{t('nextSteps')}</h5>
                     <div className="rounded-xl bg-white p-5 border border-slate-100 hover-glow dark:bg-slate-900/60 dark:border-slate-800/80 space-y-5">
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider">Recommended Specialty</span>
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider">{language === 'bn' ? 'প্রস্তাবিত বিশেষজ্ঞ বিভাগ' : 'Recommended Specialty'}</span>
                         <p className="text-sm font-extrabold text-teal-600 dark:text-teal-400 mt-1 flex items-center gap-1.5">
                           <ChevronRight className="h-4 w-4" />
                           {symptomResult.specialist}
@@ -228,7 +237,7 @@ const PatientDashboard = () => {
                       </div>
                       
                       <div className="space-y-2.5 border-t border-slate-50 dark:border-slate-800/60 pt-4">
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Care Action Steps</span>
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block">{language === 'bn' ? 'যত্ন নেওয়ার পদক্ষেপ' : 'Care Action Steps'}</span>
                         <ul className="space-y-2">
                           {symptomResult.nextSteps?.map((step, i) => (
                             <li key={i} className="flex items-start gap-2 text-xs text-slate-650 dark:text-slate-400">
@@ -251,9 +260,9 @@ const PatientDashboard = () => {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-slate-850 dark:text-white">Active Consultations</h3>
+                <h3 className="text-base font-bold text-slate-850 dark:text-white">{t('upcomingConsultations')}</h3>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                  Monitor your scheduled timeslots or cancel pending requests.
+                  {language === 'bn' ? 'আপনার নির্ধারিত সময়সূচী পর্যবেক্ষণ করুন অথবা অ্যাপয়েন্টমেন্ট বাতিল করুন।' : 'Monitor your scheduled timeslots or cancel pending requests.'}
                 </p>
               </div>
               <button
@@ -261,30 +270,30 @@ const PatientDashboard = () => {
                 className="flex items-center gap-2 rounded-xl bg-teal-500 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-teal-650 transition-all hover-scale cursor-pointer"
               >
                 <Plus className="h-4 w-4" />
-                Book Appointment
+                {t('bookAppointment')}
               </button>
             </div>
 
             {appointments.length === 0 ? (
               <div className="text-center py-12 text-xs text-slate-400 dark:text-slate-500 italic">
-                No active appointments scheduled.
+                {t('noUpcoming')}
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="border-b border-slate-100 dark:border-slate-850 font-bold text-slate-400 uppercase tracking-wider">
-                      <th className="py-3">Doctor</th>
-                      <th className="py-3">Specialty</th>
-                      <th className="py-3">Date</th>
-                      <th className="py-3">Time Slot</th>
-                      <th className="py-3">Status</th>
-                      <th className="py-3 text-right">Cancel</th>
+                      <th className="py-3">{t('doctor')}</th>
+                      <th className="py-3">{t('specialization')}</th>
+                      <th className="py-3">{t('date')}</th>
+                      <th className="py-3">{language === 'bn' ? 'সময়' : 'Time Slot'}</th>
+                      <th className="py-3">{t('status')}</th>
+                      <th className="py-3 text-right">{t('cancel')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {appointments.map((appt) => (
-                      <tr key={appt._id} className="border-b border-slate-50 dark:border-slate-900/30 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-colors duration-200">
+                      <tr key={appt._id} className="border-b border-slate-50 dark:border-slate-900/30 last:border-0 hover:bg-slate-55/50 dark:hover:bg-slate-900/20 transition-colors duration-200">
                         <td className="py-4 font-bold text-slate-850 dark:text-white">{appt.doctor.name}</td>
                         <td className="py-4 text-slate-500 dark:text-slate-400">{appt.department?.name || 'General'}</td>
                         <td className="py-4">{new Date(appt.date).toLocaleDateString()}</td>
@@ -296,7 +305,10 @@ const PatientDashboard = () => {
                             appt.status === 'cancelled' ? 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400' :
                             'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400'
                           }`}>
-                            {appt.status}
+                            {appt.status === 'approved' ? (language === 'bn' ? 'অনুমোদিত' : 'Approved') :
+                             appt.status === 'completed' ? (language === 'bn' ? 'সম্পন্ন' : 'Completed') :
+                             appt.status === 'cancelled' ? (language === 'bn' ? 'বাতিলকৃত' : 'Cancelled') :
+                             (language === 'bn' ? 'অপেক্ষমাণ' : 'Pending')}
                           </span>
                         </td>
                         <td className="py-4 text-right">
@@ -305,7 +317,7 @@ const PatientDashboard = () => {
                               onClick={() => handleCancelAppointment(appt._id)}
                               className="rounded-lg border border-red-200 text-red-600 px-3 py-1 text-[10px] font-bold uppercase tracking-wide hover:bg-red-50 hover:border-red-300 dark:border-red-900/30 dark:text-red-400 dark:hover:bg-red-950/20 transition-all hover-scale cursor-pointer"
                             >
-                              Cancel
+                              {t('cancel')}
                             </button>
                           )}
                         </td>
@@ -322,15 +334,15 @@ const PatientDashboard = () => {
         {activeTab === 'prescriptions' && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-base font-bold text-slate-850 dark:text-white">Active Prescriptions</h3>
+              <h3 className="text-base font-bold text-slate-850 dark:text-white">{t('healthHistory')}</h3>
               <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                Download digital Rx files for pharmacy purchase.
+                {language === 'bn' ? 'ওষুধ কেনার জন্য ডিজিটাল প্রেসক্রিপশন ডাউনলোড করুন।' : 'Download digital Rx files for pharmacy purchase.'}
               </p>
             </div>
 
             {prescriptions.length === 0 ? (
               <div className="text-center py-12 text-xs text-slate-400 dark:text-slate-500 italic">
-                No active prescriptions logged.
+                {t('noPrescriptions')}
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -338,7 +350,9 @@ const PatientDashboard = () => {
                   <div key={rx._id} className="rounded-2xl border border-slate-100 bg-slate-50/20 p-5 dark:border-slate-800/80 dark:bg-slate-900/20 hover-glow flex flex-col justify-between space-y-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className="rounded-full bg-teal-500/10 border border-teal-500/20 px-2.5 py-0.5 text-[9px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider">Rx Registered</span>
+                        <span className="rounded-full bg-teal-500/10 border border-teal-500/20 px-2.5 py-0.5 text-[9px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider">
+                          {language === 'bn' ? 'প্রেসক্রিপশন নথিভুক্ত' : 'Rx Registered'}
+                        </span>
                         <h4 className="text-sm font-bold text-slate-850 dark:text-white mt-2">{rx.doctor.name}</h4>
                         <p className="text-[10px] text-slate-400">{rx.doctor.specialization}</p>
                       </div>
@@ -346,19 +360,19 @@ const PatientDashboard = () => {
                         href={getPrescriptionPdfUrl(rx._id)}
                         download
                         className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-500 text-white shadow-md hover:bg-teal-600 transition-all hover-scale"
-                        title="Download Prescription PDF"
+                        title={language === 'bn' ? 'প্রেসক্রিপশন পিডিএফ ডাউনলোড করুন' : 'Download Prescription PDF'}
                       >
                         <Download className="h-4.5 w-4.5" />
                       </a>
                     </div>
 
                     <div className="border-t border-slate-100 dark:border-slate-800/60 pt-3 flex justify-between text-[11px] text-slate-500">
-                      <span>Diagnosis: <strong className="text-slate-800 dark:text-slate-200 font-bold">{rx.diagnosis}</strong></span>
+                      <span>{t('diagnosis')}: <strong className="text-slate-800 dark:text-slate-200 font-bold">{rx.diagnosis}</strong></span>
                       <span>{new Date(rx.date).toLocaleDateString()}</span>
                     </div>
 
                     <div className="bg-white rounded-xl border border-slate-100 p-4 dark:bg-slate-900 dark:border-slate-800/60 space-y-2 shadow-inner">
-                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Prescribed Medicines</span>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">{t('medicines')}</span>
                       <ul className="space-y-1.5 text-xs">
                         {rx.medicines.map((med, i) => (
                           <li key={i} className="flex justify-between border-b border-slate-50 dark:border-slate-850 last:border-0 pb-1.5 last:pb-0">

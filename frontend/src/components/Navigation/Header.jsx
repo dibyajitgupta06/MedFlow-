@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../../services/api.js';
 import { Bell, Sun, Moon, Check, CheckSquare } from 'lucide-react';
 
 const Header = () => {
   const { user } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
@@ -76,11 +78,23 @@ const Header = () => {
     <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between border-b border-slate-200/50 bg-white/70 px-8 backdrop-blur-md dark:border-slate-800/40 dark:bg-slate-950/70">
       <div className="flex items-center">
         <h2 className="text-sm font-bold tracking-tight text-slate-800 dark:text-white">
-          Welcome, <span className="text-teal-650 dark:text-teal-400 bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">{user?.profile?.name || 'Administrator'}</span>
+          {t('welcome')}, <span className="text-teal-650 dark:text-teal-400 bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">{user?.profile?.name || 'Administrator'}</span>
         </h2>
       </div>
 
       <div className="flex items-center gap-4">
+        {/* Language Toggle for Patients */}
+        {user?.role === 'patient' && (
+          <button
+            onClick={() => setLanguage(language === 'bn' ? 'en' : 'bn')}
+            className="flex h-9 px-3 items-center justify-center rounded-xl border border-slate-200/60 bg-white text-xs font-bold text-teal-650 hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-900 dark:text-teal-400 dark:hover:bg-slate-800 hover-scale transition-all duration-300 shadow-sm cursor-pointer gap-1.5"
+            title={language === 'bn' ? 'Switch to English' : 'বাংলায় পরিবর্তন করুন'}
+          >
+            <span className="text-sm">🌐</span>
+            <span>{language === 'bn' ? 'English' : 'বাংলা'}</span>
+          </button>
+        )}
+
         {/* Dark Mode Toggle */}
         <button
           onClick={() => setDarkMode(!darkMode)}

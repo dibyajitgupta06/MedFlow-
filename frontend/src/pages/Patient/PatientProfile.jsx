@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { getPatientProfile, updatePatientProfile, uploadMedicalReport } from '../../services/api.js';
 import { User, Phone, MapPin, Calendar, Heart, FileText, Upload, Plus, Trash, Loader } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import toast from 'react-hot-toast';
 
 const PatientProfile = () => {
   const { updateLocalProfile } = useAuth();
+  const { t, language } = useLanguage();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -37,7 +39,7 @@ const PatientProfile = () => {
       setAddress(data.address);
       setMedicalHistory(data.medicalHistory || []);
     } catch (err) {
-      toast.error('Failed to load profile details.');
+      toast.error(language === 'bn' ? 'প্রোফাইল লোড করতে ব্যর্থ হয়েছে।' : 'Failed to load profile details.');
     } finally {
       setLoading(false);
     }
@@ -62,9 +64,9 @@ const PatientProfile = () => {
       });
       setProfile(data);
       updateLocalProfile(data); // Sync globally
-      toast.success('Profile updated successfully!');
+      toast.success(language === 'bn' ? 'প্রোফাইল সফলভাবে আপডেট করা হয়েছে!' : 'Profile updated successfully!');
     } catch (err) {
-      toast.error('Failed to update profile.');
+      toast.error(language === 'bn' ? 'প্রোফাইল আপডেট করতে ব্যর্থ হয়েছে।' : 'Failed to update profile.');
     } finally {
       setUpdating(false);
     }
@@ -84,11 +86,11 @@ const PatientProfile = () => {
   const handleUploadReport = async (e) => {
     e.preventDefault();
     if (!reportFile) {
-      toast.error('Please select a file to upload.');
+      toast.error(language === 'bn' ? 'দয়া করে একটি ফাইল নির্বাচন করুন।' : 'Please select a file to upload.');
       return;
     }
     if (!reportName.trim()) {
-      toast.error('Please enter a description or name for the report.');
+      toast.error(language === 'bn' ? 'দয়া করে রিপোর্টের নাম লিখুন।' : 'Please enter a description or name for the report.');
       return;
     }
 
@@ -104,9 +106,9 @@ const PatientProfile = () => {
       setReportFile(null);
       // Reset input element
       document.getElementById('report-file-input').value = '';
-      toast.success('Medical report uploaded successfully!');
+      toast.success(language === 'bn' ? 'মেডিকেল রিপোর্ট সফলভাবে আপলোড করা হয়েছে!' : 'Medical report uploaded successfully!');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Upload failed.');
+      toast.error(err.response?.data?.message || (language === 'bn' ? 'আপলোড ব্যর্থ হয়েছে।' : 'Upload failed.'));
     } finally {
       setUploading(false);
     }
@@ -127,61 +129,61 @@ const PatientProfile = () => {
         <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-50 dark:border-slate-800/40 pb-4 mb-6">
             <User className="h-5 w-5 text-teal-600" />
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white">Profile Information</h3>
+            <h3 className="text-lg font-bold text-slate-800 dark:text-white">{language === 'bn' ? 'প্রোফাইল তথ্য' : 'Profile Information'}</h3>
           </div>
 
           <form onSubmit={handleUpdateProfile} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Full Name</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{language === 'bn' ? 'পুরো নাম' : 'Full Name'}</label>
                 <input
                   type="text"
                   required
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-55/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Phone Number</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{language === 'bn' ? 'ফোন নম্বর' : 'Phone Number'}</label>
                 <input
                   type="tel"
                   required
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-55/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Gender</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{language === 'bn' ? 'লিঙ্গ' : 'Gender'}</label>
                 <select
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-55/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
                 >
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="male">{language === 'bn' ? 'পুরুষ' : 'Male'}</option>
+                  <option value="female">{language === 'bn' ? 'নারী' : 'Female'}</option>
+                  <option value="other">{language === 'bn' ? 'অন্যান্য' : 'Other'}</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Date of Birth</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{language === 'bn' ? 'জন্ম তারিখ' : 'Date of Birth'}</label>
                 <input
                   type="date"
                   required
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-55/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Blood Group</label>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{language === 'bn' ? 'রক্তের গ্রুপ' : 'Blood Group'}</label>
                 <select
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-55/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
                   value={bloodGroup}
                   onChange={(e) => setBloodGroup(e.target.value)}
                 >
@@ -193,10 +195,10 @@ const PatientProfile = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Home Address</label>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{language === 'bn' ? 'স্থায়ী ঠিকানা' : 'Home Address'}</label>
               <textarea
                 rows="2"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+                className="w-full rounded-lg border border-slate-200 bg-slate-55/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
               ></textarea>
@@ -204,12 +206,12 @@ const PatientProfile = () => {
 
             {/* Medical History Tags */}
             <div className="space-y-2">
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Medical History & Allergies</label>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{language === 'bn' ? 'মেডিকেল ইতিহাস ও অ্যালার্জি' : 'Medical History & Allergies'}</label>
               <div className="flex gap-2">
                 <input
                   type="text"
-                  className="flex-1 rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
-                  placeholder="e.g. Asthma, Penicillin allergy"
+                  className="flex-1 rounded-lg border border-slate-200 bg-slate-55/50 px-4 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+                  placeholder={language === 'bn' ? 'যেমন: অ্যাজমা, পেনিসিলিন অ্যালার্জি' : 'e.g. Asthma, Penicillin allergy'}
                   value={historyInput}
                   onChange={(e) => setHistoryInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addHistoryTag())}
@@ -225,7 +227,7 @@ const PatientProfile = () => {
               
               <div className="flex flex-wrap gap-2 pt-2">
                 {medicalHistory.length === 0 ? (
-                  <span className="text-xs text-slate-400 italic">No historical conditions logged.</span>
+                  <span className="text-xs text-slate-400 italic">{language === 'bn' ? 'কোন পূর্ববর্তী ইতিহাস নথিভুক্ত নেই।' : 'No historical conditions logged.'}</span>
                 ) : (
                   medicalHistory.map((tag) => (
                     <span
@@ -250,9 +252,9 @@ const PatientProfile = () => {
               <button
                 type="submit"
                 disabled={updating}
-                className="rounded-xl bg-teal-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-teal-600 disabled:opacity-50 transition-all cursor-pointer"
+                className="rounded-xl bg-teal-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-teal-650 disabled:opacity-50 transition-all hover-scale cursor-pointer"
               >
-                {updating ? 'Saving...' : 'Save Profile'}
+                {updating ? (language === 'bn' ? 'সংরক্ষণ করা হচ্ছে...' : 'Saving...') : (language === 'bn' ? 'প্রোফাইল সংরক্ষণ করুন' : 'Save Profile')}
               </button>
             </div>
           </form>
@@ -265,24 +267,24 @@ const PatientProfile = () => {
         <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-50 dark:border-slate-800/40 pb-4 mb-6">
             <Upload className="h-5 w-5 text-teal-600" />
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white">Upload Medical Report</h3>
+            <h3 className="text-lg font-bold text-slate-800 dark:text-white">{language === 'bn' ? 'মেডিকেল রিপোর্ট আপলোড করুন' : 'Upload Medical Report'}</h3>
           </div>
 
           <form onSubmit={handleUploadReport} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Report Description / Name</label>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{language === 'bn' ? 'রিপোর্টের বর্ণনা / নাম' : 'Report Description / Name'}</label>
               <input
                 type="text"
                 required
                 className="w-full rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
-                placeholder="e.g. Annual Blood Work 2026"
+                placeholder={language === 'bn' ? 'যেমন: রক্তের পরীক্ষা ২০২৬' : 'e.g. Annual Blood Work 2026'}
                 value={reportName}
                 onChange={(e) => setReportName(e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Select File (PDF or Image)</label>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{language === 'bn' ? 'ফাইল নির্বাচন করুন (PDF বা ছবি)' : 'Select File (PDF or Image)'}</label>
               <input
                 id="report-file-input"
                 type="file"
@@ -301,10 +303,10 @@ const PatientProfile = () => {
               {uploading ? (
                 <>
                   <Loader className="h-4 w-4 animate-spin" />
-                  Uploading...
+                  {language === 'bn' ? 'আপলোড হচ্ছে...' : 'Uploading...'}
                 </>
               ) : (
-                'Upload File'
+                language === 'bn' ? 'ফাইল আপলোড করুন' : 'Upload File'
               )}
             </button>
           </form>
@@ -314,12 +316,12 @@ const PatientProfile = () => {
         <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
           <div className="flex items-center gap-3 border-b border-slate-50 dark:border-slate-800/40 pb-4 mb-4">
             <FileText className="h-5 w-5 text-teal-600" />
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white">Uploaded Records</h3>
+            <h3 className="text-lg font-bold text-slate-800 dark:text-white">{language === 'bn' ? 'আপলোডকৃত রেকর্ড' : 'Uploaded Records'}</h3>
           </div>
 
           <div className="space-y-3">
             {profile?.reports?.length === 0 ? (
-              <p className="text-xs text-slate-400 italic text-center py-6">No files uploaded yet.</p>
+              <p className="text-xs text-slate-400 italic text-center py-6">{language === 'bn' ? 'এখনো কোনো ফাইল আপলোড করা হয়নি।' : 'No files uploaded yet.'}</p>
             ) : (
               profile?.reports?.map((report) => (
                 <div
@@ -338,7 +340,7 @@ const PatientProfile = () => {
                     rel="noreferrer"
                     className="ml-4 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-600 dark:bg-teal-950/20 dark:text-teal-400 px-3 py-1.5 text-xs font-bold transition-all"
                   >
-                    View File
+                    {language === 'bn' ? 'ফাইল দেখুন' : 'View File'}
                   </a>
                 </div>
               ))

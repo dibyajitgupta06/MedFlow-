@@ -58,11 +58,10 @@ const Login = () => {
     }
   };
 
-  // Quick login helper for developers
+  // Quick login helper for developers (only fills the form fields, does not submit)
   const triggerQuickLogin = (email, password) => {
-    setValue('email', email);
-    setValue('password', password);
-    handleSubmit(onSubmit)();
+    setValue('email', email, { shouldValidate: true });
+    setValue('password', password, { shouldValidate: true });
   };
 
   return (
@@ -95,6 +94,7 @@ const Login = () => {
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Email Address</label>
               <input
                 type="email"
+                autoComplete="username"
                 {...register('email', {
                   required: 'Email is required',
                   pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
@@ -111,6 +111,7 @@ const Login = () => {
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Password</label>
               <input
                 type="password"
+                autoComplete="current-password"
                 {...register('password', { required: 'Password is required' })}
                 className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-sm text-white placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                 placeholder="••••••••"
@@ -118,6 +119,20 @@ const Login = () => {
               {errors.password && (
                 <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>
               )}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="h-4 w-4 rounded border-slate-600 bg-slate-700/50 text-teal-500 focus:ring-teal-500"
+              />
+              <label htmlFor="remember-me" className="ml-2 block text-xs text-slate-400">
+                Remember me
+              </label>
             </div>
           </div>
 
@@ -149,27 +164,33 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-3">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <button
-            onClick={() => triggerQuickLogin('admin@medflow.com', 'admin123')}
-            className="flex flex-col items-center justify-center rounded-lg border border-slate-700 bg-slate-700/30 py-2 hover:bg-slate-700/60 text-[10px] font-bold text-teal-400 hover:text-teal-300 transition-all cursor-pointer"
+            type="button"
+            onClick={() => triggerQuickLogin('admin@medflow.com', '1234')}
+            className="flex flex-col items-center justify-center rounded-lg border border-slate-700 bg-slate-700/30 py-2.5 hover:bg-slate-700/60 text-[10px] font-bold text-teal-400 hover:text-teal-300 transition-all cursor-pointer"
           >
             <span>Admin</span>
-            <span className="text-[8px] text-slate-500 font-normal">Full control</span>
+            <span className="text-[7.5px] text-slate-500 font-normal mt-0.5">admin@medflow.com</span>
+            <span className="text-[7.5px] text-slate-500 font-normal">Pass: 1234</span>
           </button>
           <button
-            onClick={() => triggerQuickLogin('alice.smith@medflow.com', 'doctor123')}
-            className="flex flex-col items-center justify-center rounded-lg border border-slate-700 bg-slate-700/30 py-2 hover:bg-slate-700/60 text-[10px] font-bold text-teal-400 hover:text-teal-300 transition-all cursor-pointer"
+            type="button"
+            onClick={() => triggerQuickLogin('iqbal.karim@medflow.com', '1234')}
+            className="flex flex-col items-center justify-center rounded-lg border border-slate-700 bg-slate-700/30 py-2.5 hover:bg-slate-700/60 text-[10px] font-bold text-teal-400 hover:text-teal-300 transition-all cursor-pointer"
           >
             <span>Doctor</span>
-            <span className="text-[8px] text-slate-500 font-normal">Alice Smith</span>
+            <span className="text-[7.5px] text-slate-500 font-normal mt-0.5">iqbal.karim@medflow.com</span>
+            <span className="text-[7.5px] text-slate-500 font-normal">Pass: 1234</span>
           </button>
           <button
-            onClick={() => triggerQuickLogin('john.doe@gmail.com', 'patient123')}
-            className="flex flex-col items-center justify-center rounded-lg border border-slate-700 bg-slate-700/30 py-2 hover:bg-slate-700/60 text-[10px] font-bold text-teal-400 hover:text-teal-300 transition-all cursor-pointer"
+            type="button"
+            onClick={() => triggerQuickLogin('jamil.karim@gmail.com', '1234')}
+            className="flex flex-col items-center justify-center rounded-lg border border-slate-700 bg-slate-700/30 py-2.5 hover:bg-slate-700/60 text-[10px] font-bold text-teal-400 hover:text-teal-300 transition-all cursor-pointer"
           >
             <span>Patient</span>
-            <span className="text-[8px] text-slate-500 font-normal">John Doe</span>
+            <span className="text-[7.5px] text-slate-500 font-normal mt-0.5">jamil.karim@gmail.com</span>
+            <span className="text-[7.5px] text-slate-500 font-normal">Pass: 1234</span>
           </button>
         </div>
 

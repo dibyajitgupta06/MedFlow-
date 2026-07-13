@@ -128,7 +128,7 @@ const AdminDashboard = () => {
             </div>
             <div>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Revenue</span>
-              <h3 className="text-2xl font-extrabold text-slate-800 dark:text-white mt-0.5">${summary.totalRevenue}</h3>
+              <h3 className="text-2xl font-extrabold text-slate-800 dark:text-white mt-0.5">৳{summary.totalRevenue}</h3>
             </div>
           </div>
           <div className="w-full bg-slate-100 rounded-full h-1 dark:bg-slate-800 mt-4 overflow-hidden">
@@ -141,7 +141,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Chart 1: Revenue Trends over months */}
         <div className="rounded-3xl border border-slate-200/50 bg-white dark:border-slate-800/40 dark:bg-slate-950 p-6 shadow-sm glass-panel hover-glow">
-          <h3 className="text-xs font-bold text-slate-800 dark:text-white mb-6 uppercase tracking-wider">Monthly Revenue Trajectory ($)</h3>
+          <h3 className="text-xs font-bold text-slate-800 dark:text-white mb-6 uppercase tracking-wider">Monthly Revenue Trajectory (৳)</h3>
           <div className="h-72 w-full text-xs">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={monthlyStats} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

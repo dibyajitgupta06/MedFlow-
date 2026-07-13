@@ -64,7 +64,7 @@ const Register = () => {
                 type="text"
                 {...register('name', { required: 'Name is required' })}
                 className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-sm text-white placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                placeholder="John Doe"
+                placeholder="Karim Uddin"
               />
               {errors.name && (
                 <p className="mt-1 text-xs text-red-400">{errors.name.message}</p>
@@ -81,7 +81,7 @@ const Register = () => {
                   pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
                 })}
                 className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-sm text-white placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                placeholder="john@example.com"
+                placeholder="karim@gmail.com"
               />
               {errors.email && (
                 <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
@@ -95,7 +95,7 @@ const Register = () => {
                 type="password"
                 {...register('password', {
                   required: 'Password is required',
-                  minLength: { value: 6, message: 'Password must be at least 6 characters' },
+                  minLength: { value: 4, message: 'Password must be at least 4 characters' },
                 })}
                 className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-sm text-white placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                 placeholder="••••••••"

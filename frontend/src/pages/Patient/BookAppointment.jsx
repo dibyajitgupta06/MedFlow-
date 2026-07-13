@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDepartments, getDoctors, getAppointments, bookAppointment } from '../../services/api.js';
 import { Calendar, User, Layers, Clock, AlertCircle, Loader } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import toast from 'react-hot-toast';
 
 const BookAppointment = () => {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const [departments, setDepartments] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
@@ -91,7 +93,7 @@ const BookAppointment = () => {
   const handleBooking = async (e) => {
     e.preventDefault();
     if (!selectedDoc || !selectedDept || !bookingDate || !selectedSlot) {
-      toast.error('Please complete all scheduling fields.');
+      toast.error(language === 'bn' ? 'দয়া করে সব ঘর পূরণ করুন।' : 'Please complete all scheduling fields.');
       return;
     }
 
@@ -105,10 +107,10 @@ const BookAppointment = () => {
         symptoms,
         reason,
       });
-      toast.success('Appointment booked successfully!');
+      toast.success(t('apptSuccess'));
       navigate('/patient'); // Redirect to dashboard
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to book appointment.');
+      toast.error(err.response?.data?.message || (language === 'bn' ? 'অ্যাপয়েন্টমেন্ট বুক করা যায়নি।' : 'Failed to book appointment.'));
     } finally {
       setBookingLoading(false);
     }
@@ -128,9 +130,9 @@ const BookAppointment = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Book Clinic Consultation</h1>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">{t('scheduleConsultation')}</h1>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          Complete the form below to book a conflict-free appointment with our specialized medical team.
+          {t('bookSubtitle')}
         </p>
       </div>
 
@@ -142,7 +144,7 @@ const BookAppointment = () => {
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                 <Layers className="h-4 w-4 text-teal-500" />
-                Select Department
+                {t('selectDept')}
               </label>
               <select
                 required
@@ -154,7 +156,7 @@ const BookAppointment = () => {
                   setSelectedSlot('');
                 }}
               >
-                <option value="">-- Choose Department --</option>
+                <option value="">{t('chooseDeptOpt')}</option>
                 {departments.map((dept) => (
                   <option key={dept._id} value={dept._id}>{dept.name}</option>
                 ))}
@@ -165,7 +167,7 @@ const BookAppointment = () => {
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                 <User className="h-4 w-4 text-teal-500" />
-                Select Doctor
+                {language === 'bn' ? 'ডাক্তার নির্বাচন করুন' : 'Select Doctor'}
               </label>
               <select
                 required
@@ -177,10 +179,10 @@ const BookAppointment = () => {
                   setSelectedSlot(''); // Reset slot
                 }}
               >
-                <option value="">-- Choose Doctor --</option>
+                <option value="">{t('chooseDocOpt')}</option>
                 {filteredDoctors.map((doc) => (
                   <option key={doc._id} value={doc._id}>
-                    {doc.name} ({doc.specialization} - ${doc.fees})
+                    {doc.name} ({doc.specialization} - {t('taka')}{doc.fees})
                   </option>
                 ))}
               </select>
@@ -190,7 +192,7 @@ const BookAppointment = () => {
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                 <Calendar className="h-4 w-4 text-teal-500" />
-                Appointment Date
+                {t('apptDate')}
               </label>
               <input
                 type="date"
@@ -210,7 +212,7 @@ const BookAppointment = () => {
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                 <Clock className="h-4 w-4 text-teal-500" />
-                Available Slots
+                {t('availableSlots')}
               </label>
               <select
                 required
@@ -220,12 +222,12 @@ const BookAppointment = () => {
                 onChange={(e) => setSelectedSlot(e.target.value)}
               >
                 {!bookingDate ? (
-                  <option value="">-- Select Date First --</option>
+                  <option value="">{t('selectDateFirst')}</option>
                 ) : availableSlots.length === 0 ? (
-                  <option value="">No Slots Available (Doctor Offline/Fully Booked)</option>
+                  <option value="">{t('noSlots')}</option>
                 ) : (
                   <>
-                    <option value="">-- Choose Slot --</option>
+                    <option value="">{t('chooseSlotOpt')}</option>
                     {availableSlots.map((slot) => (
                       <option key={slot} value={slot}>{slot}</option>
                     ))}
@@ -236,11 +238,11 @@ const BookAppointment = () => {
 
             {/* Symptoms */}
             <div className="sm:col-span-2 space-y-2">
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Describe Symptoms</label>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('describeSymptoms')}</label>
               <textarea
                 rows="2"
                 className="w-full rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
-                placeholder="e.g. Mild headache, sore throat for 3 days"
+                placeholder={t('symptomsPlaceholder')}
                 value={symptoms}
                 onChange={(e) => setSymptoms(e.target.value)}
               ></textarea>
@@ -248,11 +250,11 @@ const BookAppointment = () => {
 
             {/* Reason */}
             <div className="sm:col-span-2 space-y-2">
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Reason for Visit</label>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('reasonVisit')}</label>
               <input
                 type="text"
                 className="w-full rounded-lg border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900"
-                placeholder="e.g. Routine follow-up, physical exam"
+                placeholder={t('reasonPlaceholder')}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
               />
@@ -264,9 +266,9 @@ const BookAppointment = () => {
             <div className="rounded-lg bg-teal-500/[0.03] border border-teal-500/10 p-4 flex gap-3 dark:bg-teal-950/10">
               <AlertCircle className="h-5 w-5 text-teal-600 dark:text-teal-400 shrink-0" />
               <div className="text-xs space-y-1 text-slate-600 dark:text-slate-400">
-                <p><strong>Consultation Fees:</strong> ${doctorDetails.fees}</p>
-                <p><strong>Location:</strong> MedFlow Clinic Central Wing, 2nd Floor</p>
-                <p>Payments are handled during clinical check-in.</p>
+                <p><strong>{t('consultationFees')}:</strong> {t('taka')}{doctorDetails.fees}</p>
+                <p><strong>{t('clinicLocation')}:</strong> {language === 'bn' ? 'মেডফ্লো ক্লিনিক, ধানমণ্ডি শাখা, ঢাকা' : 'MedFlow Clinic, Dhanmondi Branch, Dhaka'}</p>
+                <p>{t('paymentNotice')}</p>
               </div>
             </div>
           )}
@@ -275,22 +277,22 @@ const BookAppointment = () => {
             <button
               type="button"
               onClick={() => navigate('/patient')}
-              className="rounded-xl border border-slate-200 hover:bg-slate-50 px-5 py-2.5 text-sm font-semibold dark:border-slate-800 dark:hover:bg-slate-900 transition-all cursor-pointer"
+              className="rounded-xl border border-slate-200 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900 cursor-pointer"
             >
-              Cancel
+              {t('cancel')}
             </button>
             <button
               type="submit"
-              disabled={bookingLoading || !selectedSlot}
-              className="flex items-center gap-2 rounded-xl bg-teal-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-teal-600 disabled:opacity-50 transition-all cursor-pointer"
+              disabled={bookingLoading}
+              className="flex items-center gap-2 rounded-xl bg-teal-500 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-teal-650 disabled:opacity-50 transition-all hover-scale cursor-pointer"
             >
               {bookingLoading ? (
                 <>
                   <Loader className="h-4 w-4 animate-spin" />
-                  Booking...
+                  {language === 'bn' ? 'বুকিং হচ্ছে...' : 'Booking...'}
                 </>
               ) : (
-                'Book Consultation'
+                t('confirmApptBtn')
               )}
             </button>
           </div>

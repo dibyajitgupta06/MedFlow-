@@ -9,7 +9,7 @@ const router = express.Router();
 // Input Validations for Registration
 const registerValidation = [
   body('email').isEmail().withMessage('Please enter a valid email address'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+  body('password').isLength({ min: 4 }).withMessage('Password must be at least 4 characters long'),
   body('name').notEmpty().withMessage('Name is required').trim(),
   body('phone').notEmpty().withMessage('Phone number is required').trim(),
   body('gender').isIn(['male', 'female', 'other']).withMessage('Invalid gender selection'),

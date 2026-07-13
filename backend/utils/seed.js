@@ -44,31 +44,31 @@ const seedData = async () => {
     // Create Admin
     const adminUser = await User.create({
       email: 'admin@medflow.com',
-      password: 'admin123',
+      password: '1234',
       role: 'admin',
     });
 
     // Create Doctors
-    const docUser1 = await User.create({ email: 'alice.smith@medflow.com', password: 'doctor123', role: 'doctor' });
-    const docUser2 = await User.create({ email: 'bob.johnson@medflow.com', password: 'doctor123', role: 'doctor' });
-    const docUser3 = await User.create({ email: 'charlie.brown@medflow.com', password: 'doctor123', role: 'doctor' });
-    const docUser4 = await User.create({ email: 'diana.prince@medflow.com', password: 'doctor123', role: 'doctor' });
+    const docUser1 = await User.create({ email: 'iqbal.karim@medflow.com', password: '1234', role: 'doctor' });
+    const docUser2 = await User.create({ email: 'samiur.rahman@medflow.com', password: '1234', role: 'doctor' });
+    const docUser3 = await User.create({ email: 'rahim.uddin@medflow.com', password: '1234', role: 'doctor' });
+    const docUser4 = await User.create({ email: 'dilruba.karim@medflow.com', password: '1234', role: 'doctor' });
 
     // Create Patients
-    const patientUser1 = await User.create({ email: 'john.doe@gmail.com', password: 'patient123', role: 'patient' });
-    const patientUser2 = await User.create({ email: 'jane.smith@gmail.com', password: 'patient123', role: 'patient' });
+    const patientUser1 = await User.create({ email: 'jamil.karim@gmail.com', password: '1234', role: 'patient' });
+    const patientUser2 = await User.create({ email: 'jahanara.rahim@gmail.com', password: '1234', role: 'patient' });
 
     console.log('Seeding profiles...');
     // Doctor Profiles
     const doc1 = await Doctor.create({
       user: docUser1._id,
-      name: 'Dr. Alice Smith',
-      phone: '+1 555-0101',
+      name: 'Dr. Iqbal Karim',
+      phone: '+880 1711-000101',
       specialization: 'Cardiologist',
       department: cardiology,
       experience: 12,
-      fees: 150,
-      bio: 'Expert in interventional cardiology and preventative heart care.',
+      fees: 1200,
+      bio: 'Expert in interventional cardiology and preventative heart care with extensive experience in Dhaka.',
       availability: [
         { day: 'Monday', slots: ['09:00 AM - 09:30 AM', '10:00 AM - 10:30 AM', '11:00 AM - 11:30 AM'] },
         { day: 'Wednesday', slots: ['02:00 PM - 02:30 PM', '03:00 PM - 03:30 PM', '04:00 PM - 04:30 PM'] },
@@ -77,13 +77,13 @@ const seedData = async () => {
 
     const doc2 = await Doctor.create({
       user: docUser2._id,
-      name: 'Dr. Bob Johnson',
-      phone: '+1 555-0102',
+      name: 'Dr. Samiur Rahman',
+      phone: '+880 1819-000102',
       specialization: 'Pediatrician',
       department: pediatrics,
       experience: 8,
-      fees: 100,
-      bio: 'Dedicated to providing comprehensive developmental and clinical pediatric services.',
+      fees: 800,
+      bio: 'Dedicated to providing comprehensive developmental and clinical pediatric services to children.',
       availability: [
         { day: 'Tuesday', slots: ['09:00 AM - 09:30 AM', '10:00 AM - 10:30 AM'] },
         { day: 'Thursday', slots: ['09:00 AM - 09:30 AM', '10:00 AM - 10:30 AM', '02:00 PM - 02:30 PM'] },
@@ -92,13 +92,13 @@ const seedData = async () => {
 
     const doc3 = await Doctor.create({
       user: docUser3._id,
-      name: 'Dr. Charlie Brown',
-      phone: '+1 555-0103',
+      name: 'Dr. Rahim Uddin',
+      phone: '+880 1911-000103',
       specialization: 'Neurologist',
       department: neurology,
       experience: 15,
-      fees: 200,
-      bio: 'Specialist in cognitive disorders, neuromuscular issues, and sleep medicine.',
+      fees: 1500,
+      bio: 'Specialist in cognitive disorders, neuromuscular issues, and sleep medicine in Bangladesh.',
       availability: [
         { day: 'Monday', slots: ['01:00 PM - 01:30 PM', '02:00 PM - 02:30 PM'] },
         { day: 'Friday', slots: ['09:00 AM - 09:30 AM', '10:00 AM - 10:30 AM'] },
@@ -107,13 +107,13 @@ const seedData = async () => {
 
     const doc4 = await Doctor.create({
       user: docUser4._id,
-      name: 'Dr. Diana Prince',
-      phone: '+1 555-0104',
+      name: 'Dr. Dilruba Karim',
+      phone: '+880 1552-000104',
       specialization: 'General Practitioner',
       department: generalMedicine,
       experience: 6,
-      fees: 80,
-      bio: 'Family physician passionate about holistic primary care and lifestyle medicine.',
+      fees: 600,
+      bio: 'Family physician passionate about holistic primary care and family medicine.',
       availability: [
         { day: 'Monday', slots: ['09:00 AM - 09:30 AM', '10:00 AM - 10:30 AM'] },
         { day: 'Tuesday', slots: ['09:00 AM - 09:30 AM', '10:00 AM - 10:30 AM'] },
@@ -126,23 +126,23 @@ const seedData = async () => {
     // Patient Profiles
     const patient1 = await Patient.create({
       user: patientUser1._id,
-      name: 'John Doe',
-      phone: '+1 555-0201',
+      name: 'Jamil Karim',
+      phone: '+880 1819-123456',
       gender: 'male',
       dob: new Date('1990-05-15'),
       bloodGroup: 'O+',
-      address: '123 Main Street, New York, NY',
+      address: 'House 45, Road 12, Dhanmondi, Dhaka',
       medicalHistory: ['Hypertension', 'Dust Allergy'],
     });
 
     const patient2 = await Patient.create({
       user: patientUser2._id,
-      name: 'Jane Smith',
-      phone: '+1 555-0202',
+      name: 'Jahanara Rahim',
+      phone: '+880 1911-987654',
       gender: 'female',
       dob: new Date('1995-10-22'),
       bloodGroup: 'A-',
-      address: '456 Elm Street, Chicago, IL',
+      address: 'Flat 3B, Sector 4, Uttara, Dhaka',
       medicalHistory: ['Asthma'],
     });
 

@@ -166,7 +166,7 @@ const ManageDoctors = () => {
                     </td>
                     <td className="py-4 text-slate-500 dark:text-slate-400">{doc.department?.name || 'General'}</td>
                     <td className="py-4">{doc.specialization}</td>
-                    <td className="py-4 font-semibold text-slate-850 dark:text-slate-300">${doc.fees}</td>
+                    <td className="py-4 font-semibold text-slate-850 dark:text-slate-300">৳{doc.fees}</td>
                     <td className="py-4">
                       <button
                         onClick={() => handleToggleApproval(doc)}
@@ -297,7 +297,7 @@ const ManageDoctors = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Consultation Fees ($)</label>
+                  <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Consultation Fees (৳)</label>
                   <input
                     type="number"
                     required

@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import {
   LayoutDashboard,
   User,
@@ -16,13 +17,14 @@ import {
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   if (!user) return null;
 
   const linksByRole = {
     patient: [
-      { path: '/patient', label: 'Dashboard', icon: LayoutDashboard },
-      { path: '/patient/book', label: 'Book Appointment', icon: Calendar },
-      { path: '/patient/profile', label: 'My Profile', icon: User },
+      { path: '/patient', label: t('navDashboard'), icon: LayoutDashboard },
+      { path: '/patient/book', label: t('navBook'), icon: Calendar },
+      { path: '/patient/profile', label: t('navProfile'), icon: User },
     ],
     doctor: [
       { path: '/doctor', label: 'Dashboard', icon: LayoutDashboard },
@@ -86,7 +88,7 @@ const Sidebar = () => {
               {user.profile?.name || 'MedFlow Admin'}
             </p>
             <p className="truncate text-[9px] text-slate-500 font-semibold uppercase tracking-wider">
-              {user.role} Portal
+              {user.role === 'patient' ? t('patientPortal') : `${user.role} Portal`}
             </p>
           </div>
         </div>
@@ -96,7 +98,7 @@ const Sidebar = () => {
           className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 cursor-pointer"
         >
           <LogOut className="h-4.5 w-4.5 shrink-0" />
-          Logout
+          {t('logout')}
         </button>
       </div>
     </aside>

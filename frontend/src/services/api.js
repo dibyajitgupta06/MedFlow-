@@ -70,7 +70,10 @@ export const updateAppointmentStatus = (id, statusData) => API.put(`/appointment
 export const createPrescription = (prescriptionData) => API.post('/prescriptions', prescriptionData);
 export const getPrescriptions = () => API.get('/prescriptions');
 export const getPrescriptionDetails = (id) => API.get(`/prescriptions/${id}`);
-export const getPrescriptionPdfUrl = (id) => `${API.defaults.baseURL}/prescriptions/${id}/pdf`;
+export const getPrescriptionPdfUrl = (id) => {
+  const token = localStorage.getItem('token');
+  return `${API.defaults.baseURL}/prescriptions/${id}/pdf${token ? `?token=${token}` : ''}`;
+};
 
 // AI Symptom Checker
 export const checkSymptoms = (symptomsText) => API.post('/symptoms/check', { symptoms: symptomsText });
